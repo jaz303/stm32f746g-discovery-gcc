@@ -1,43 +1,43 @@
-TOOLCHAIN			?= arm-none-eabi-
-CC 					:= $(TOOLCHAIN)gcc
-AS 					:= $(TOOLCHAIN)as
-LD 					:= $(TOOLCHAIN)gcc
-OBJCOPY				:= $(TOOLCHAIN)objcopy
+TOOLCHAIN           ?= arm-none-eabi-
+CC                  := $(TOOLCHAIN)gcc
+AS                  := $(TOOLCHAIN)as
+LD                  := $(TOOLCHAIN)gcc
+OBJCOPY             := $(TOOLCHAIN)objcopy
 
-PRODUCT_NAME		:= test
-BUILD 				:= build
-PRODUCT_BASE		:= $(BUILD)/$(PRODUCT_NAME)
-PRODUCT_ELF 		:= $(PRODUCT_BASE).elf
-PRODUCT_HEX			:= $(patsubst %.elf,%.hex,$(PRODUCT_ELF))
-PRODUCT_BIN			:= $(patsubst %.elf,%.bin,$(PRODUCT_ELF))
+PRODUCT_NAME        := test
+BUILD               := build
+PRODUCT_BASE        := $(BUILD)/$(PRODUCT_NAME)
+PRODUCT_ELF         := $(PRODUCT_BASE).elf
+PRODUCT_HEX         := $(patsubst %.elf,%.hex,$(PRODUCT_ELF))
+PRODUCT_BIN         := $(patsubst %.elf,%.bin,$(PRODUCT_ELF))
 
 # BSP Features; remove any you don't need
-BSP 				:= audio camera eeprom lcd qspi sd sdram ts
+BSP                 := audio camera eeprom lcd qspi sd sdram ts
 
 # Project source
-PROJ_SRC 			:= $(shell find src -name '*.c' -or -name '*.cpp' -or -name '*.s')
-PROJ_OBJ 			:= $(addsuffix .o,$(basename $(PROJ_SRC)))
+PROJ_SRC            := $(shell find src -name '*.c' -or -name '*.cpp' -or -name '*.s')
+PROJ_OBJ            := $(addsuffix .o,$(basename $(PROJ_SRC)))
 
 # CMSIS
-CMSIS_DIR 			:= ../../lib/Drivers/CMSIS
-CMSIS_DEVICE_DIR	:= $(CMSIS_DIR)/Device/ST/STM32F7xx
+CMSIS_DIR           := ../../lib/Drivers/CMSIS
+CMSIS_DEVICE_DIR    := $(CMSIS_DIR)/Device/ST/STM32F7xx
 
 # Local directory for storing compiled HAL/BSP objects
-DEPS 				:= .deps
+DEPS                := .deps
 
 # HAL setup
-HAL_DIR 			:= ../../lib/Drivers/STM32F7xx_HAL_Driver
-HAL_INC 			:= $(HAL_DIR)/Inc
-HAL_SRC 			:= $(shell find $(HAL_DIR)/Src -name '*.c')
-HAL_OBJ_DIR			:= $(DEPS)/hal
-HAL_OBJ				:= $(patsubst %.c,%.o,$(addprefix $(HAL_OBJ_DIR)/, $(notdir $(HAL_SRC))))
+HAL_DIR             := ../../lib/Drivers/STM32F7xx_HAL_Driver
+HAL_INC             := $(HAL_DIR)/Inc
+HAL_SRC             := $(shell find $(HAL_DIR)/Src -name '*.c')
+HAL_OBJ_DIR         := $(DEPS)/hal
+HAL_OBJ             := $(patsubst %.c,%.o,$(addprefix $(HAL_OBJ_DIR)/, $(notdir $(HAL_SRC))))
 
 # BSP setup
-BSP_DIR 			:= ../../lib/Drivers/BSP/STM32746G-Discovery
-BSP_INC 			:= $(BSP_DIR)
-BSP_SRC 			:= $(addsuffix .c, $(addprefix $(BSP_DIR)/stm32746g_discovery_, $(BSP)))
-BSP_OBJ_DIR 		:= $(DEPS)/bsp
-BSP_OBJ 			:= $(patsubst %.c,%.o,$(addprefix $(BSP_OBJ_DIR)/, $(notdir $(BSP_SRC))))
+BSP_DIR             := ../../lib/Drivers/BSP/STM32746G-Discovery
+BSP_INC             := $(BSP_DIR)
+BSP_SRC             := $(addsuffix .c, $(addprefix $(BSP_DIR)/stm32746g_discovery_, $(BSP)))
+BSP_OBJ_DIR         := $(DEPS)/bsp
+BSP_OBJ             := $(patsubst %.c,%.o,$(addprefix $(BSP_OBJ_DIR)/, $(notdir $(BSP_SRC))))
 
 # Include path
 INCLUDE := -Iinclude -Iconfig

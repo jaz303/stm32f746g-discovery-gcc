@@ -57,7 +57,7 @@ $(HAL_OBJ_DIR):
 	mkdir -p $(HAL_OBJ_DIR)
 
 $(PRODUCT_ELF): $(BUILD) obj
-	$(LD) -T STM32F746NGHx_FLASH.ld $(LDFLAGS) -o $@ $(HAL_OBJ) $(PROJ_OBJ)
+	$(LD) -T stm32f746.ld $(LDFLAGS) -o $@ $(HAL_OBJ) $(PROJ_OBJ)
 
 $(PRODUCT_BIN): $(PRODUCT_ELF)
 	$(OBJCOPY) -O binary $< $@

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+cp -R templates/$2 proj/$1

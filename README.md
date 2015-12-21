@@ -11,12 +11,12 @@ This is a workspace for developing with the [STM32F746G-DISCO](http://www.st.com
   * Ensure toolchain is in your `$PATH`.
   * Create a project based on the `test` template:
 
-    $ ./create-project my-first-project test
+      $ ./create-project my-first-project test
 
   * Build the new project
     
-    $ cd proj/my-first-project
-    $ make
+      $ cd proj/my-first-project
+      $ make
 
 ## Credits
 

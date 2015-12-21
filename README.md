@@ -4,14 +4,19 @@ This is a workspace for developing with the [STM32F746G-DISCO](http://www.st.com
 
 ## How to use
 
-  - Install an ARM toolchain. I'm using [Canonical's](https://launchpad.net/gcc-arm-embedded), who provide builds for Linux, OS X and Windows
+  - Install an ARM toolchain. I'm using [Canonical's](https://launchpad.net/gcc-arm-embedded) (they provide builds for Linux, OS X and Windows).
 
-## Building the test project
+## Building a test project
 
-Ensure your toolchain is in your `$PATH`.
+  * Ensure toolchain is in your `$PATH`.
+  * Create a project based on the `test` template:
 
-    cd proj/test
-    make
+    $ ./create-project my-first-project test
+
+  * Build the new project
+    
+    $ cd proj/my-first-project
+    $ make
 
 ## Credits
 

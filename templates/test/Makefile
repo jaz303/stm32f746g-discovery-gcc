@@ -4,7 +4,7 @@ AS                  := $(TOOLCHAIN)as
 LD                  := $(TOOLCHAIN)gcc
 OBJCOPY             := $(TOOLCHAIN)objcopy
 
-PRODUCT_NAME        := test
+PRODUCT_NAME        := main
 BUILD               := build
 PRODUCT_BASE        := $(BUILD)/$(PRODUCT_NAME)
 PRODUCT_ELF         := $(PRODUCT_BASE).elf

@@ -1,3 +1,4 @@
 #!/bin/sh
 
+mkdir -p proj
 cp -R templates/$2 proj/$1

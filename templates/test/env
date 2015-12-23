@@ -1,0 +1,5 @@
+TOOLCHAIN=arm-none-eabi-
+
+function debug {
+	${TOOLCHAIN}gdb $(find build -name '*.elf' | head -n1)
+}

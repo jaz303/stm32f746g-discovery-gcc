@@ -1,18 +1,25 @@
+DEBUG 				?= 1
+
 TOOLCHAIN           ?= arm-none-eabi-
 CC                  := $(TOOLCHAIN)gcc
+CXX 				:= $(TOOLCHAIN)g++
 AS                  := $(TOOLCHAIN)as
 LD                  := $(TOOLCHAIN)gcc
 OBJCOPY             := $(TOOLCHAIN)objcopy
+STRIP 				:= $(TOOLCHAIN)strip
 
 PRODUCT_NAME        := main
 BUILD               := build
-PRODUCT_BASE        := $(BUILD)/$(PRODUCT_NAME)
-PRODUCT_ELF         := $(PRODUCT_BASE).elf
-PRODUCT_HEX         := $(patsubst %.elf,%.hex,$(PRODUCT_ELF))
+PRODUCT_BASE 		:= $(BUILD)/$(PRODUCT_NAME)
+PRODUCT_TMP         := $(PRODUCT_BASE).tmp
+PRODUCT_ELF			:= $(PRODUCT_BASE).elf
+PRODUCT_HEX        	:= $(patsubst %.elf,%.hex,$(PRODUCT_ELF))
 PRODUCT_BIN         := $(patsubst %.elf,%.bin,$(PRODUCT_ELF))
+DEBUG_SYMBOLS 		:= $(PRODUCT_BASE).debug
 
 # BSP Features; remove any you don't need
-BSP                 := audio camera eeprom lcd qspi sd sdram ts
+#BSP                 := audio camera eeprom lcd qspi sd sdram ts
+BSP := 
 
 # Project source
 PROJ_SRC            := $(shell find src -name '*.c' -or -name '*.cpp' -or -name '*.s')
@@ -49,9 +56,16 @@ INCLUDE += -I$(BSP_INC)
 MCPU := cortex-m7
 PART := STM32F746xx
 FLAGS := -mcpu=$(MCPU) -mthumb
-CFLAGS := $(FLAGS) $(INCLUDE) -D$(PART)
-LDFLAGS := -specs=nosys.specs -Wl,--gc-sections $(FLAGS)
+CFLAGS := $(FLAGS) -Os -ffunction-sections -fdata-sections $(INCLUDE) -D$(PART)
+CXXFLAGS := $(CFLAGS)
+LDFLAGS := $(FLAGS) -specs=nosys.specs -Wl,--gc-sections
 ASFLAGS := $(FLAGS)
+
+ifeq ($(DEBUG),1)
+	CFLAGS += -g
+	LDFLAGS += -g
+	ASFLAGS += -g
+endif
 
 $(HAL_OBJ_DIR)/%.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
@@ -62,10 +76,27 @@ $(BSP_OBJ_DIR)/%.o: %.c
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c -o $@ $<
+
 %.o: %.s
 	$(AS) $(ASFLAGS) -o $@ $<
 
-default: $(PRODUCT_ELF) $(PRODUCT_BIN) $(PRODUCT_HEX)
+%.bin: %.elf
+	$(OBJCOPY) -O binary $< $@
+
+%.hex: %.elf
+	$(OBJCOPY) -O ihex $< $@
+
+all: $(PRODUCT_ELF) $(PRODUCT_HEX) $(PRODUCT_BIN)
+
+$(PRODUCT_ELF): $(PRODUCT_TMP) $(DEBUG_SYMBOLS)
+	cp $(PRODUCT_TMP) $(PRODUCT_ELF)
+	$(STRIP) --strip-debug --strip-unneeded $(PRODUCT_ELF)
+	$(OBJCOPY) --add-gnu-debuglink=$(DEBUG_SYMBOLS) $(PRODUCT_ELF)
+
+$(DEBUG_SYMBOLS): $(PRODUCT_TMP)
+	$(OBJCOPY) --only-keep-debug $< $@
 
 $(HAL_OBJ_DIR):
 	mkdir -p $(HAL_OBJ_DIR)
@@ -73,14 +104,8 @@ $(HAL_OBJ_DIR):
 $(BSP_OBJ_DIR):
 	mkdir -p $(BSP_OBJ_DIR)
 
-$(PRODUCT_ELF): $(BUILD) obj
+$(PRODUCT_TMP): $(BUILD) obj
 	$(LD) -T stm32f746.ld $(LDFLAGS) -o $@ $(HAL_OBJ) $(BSP_OBJ) $(PROJ_OBJ)
-
-$(PRODUCT_BIN): $(PRODUCT_ELF)
-	$(OBJCOPY) -O binary $< $@
-
-$(PRODUCT_HEX): $(PRODUCT_ELF)
-	$(OBJCOPY) -O ihex $< $@
 
 $(BUILD):
 	mkdir -p $(BUILD)
@@ -93,8 +118,7 @@ obj: hal_obj bsp_obj $(PROJ_OBJ)
 
 vpath %.c $(HAL_DIR)/Src $(BSP_DIR)
 
-
 clean:
 	rm -rf .deps $(PROJ_OBJ)
 
-.PHONY: hal_obj obj clean
+.PHONY: hal_obj obj clean all deploy

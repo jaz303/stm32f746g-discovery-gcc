@@ -6,7 +6,13 @@
   */
 void HAL_MspInit(void)
 {
- 
+    GPIO_InitTypeDef gpioConfig;
+    gpioConfig.Pin = GPIO_PIN_1;
+    gpioConfig.Mode = GPIO_MODE_OUTPUT_PP;
+    gpioConfig.Pull = GPIO_NOPULL;
+    gpioConfig.Speed = GPIO_SPEED_FREQ_LOW;
+
+    HAL_GPIO_Init(GPIOI, &gpioConfig);
 }
 
 /**

@@ -98,11 +98,13 @@ SECTIONS
     {
         . = ALIGN(4);
         _sbss = .;         /* define a global symbol at bss start; used by startup code */
+        __bss_start__ = .;
         *(.bss*)
         *(COMMON)
 
         . = ALIGN(4);
         _ebss = .;         /* define a global symbol at bss end; used by startup code and GC */
+        __bss_end__ = .;
     } >RAM
 
     /* this is to define the start of the heap, and make sure we have a minimum size */

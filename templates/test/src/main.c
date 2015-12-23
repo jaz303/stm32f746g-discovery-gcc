@@ -70,6 +70,10 @@ int main(void) {
     /* Infinite loop */
     while (1)
     {
+        HAL_GPIO_WritePin(GPIOI, GPIO_PIN_1, GPIO_PIN_SET);
+        HAL_Delay(500);
+        HAL_GPIO_WritePin(GPIOI, GPIO_PIN_1, GPIO_PIN_RESET);
+        HAL_Delay(500);
     }
 }
 

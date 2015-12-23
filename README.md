@@ -13,6 +13,7 @@ This is a workspace for developing with the [STM32F746G-DISCO](http://www.st.com
 ## How to use
 
   - Install an ARM toolchain. I'm using [Canonical's](https://launchpad.net/gcc-arm-embedded) (they provide builds for Linux, OS X and Windows).
+  - Install [stlink](https://github.com/texane/stlink)
 
 ## Building a test project
 
